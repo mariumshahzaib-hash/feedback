@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Instruction Cards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #00ff88;
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #00ff88;
+            color: #00ff88;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #00ff88; }
+            to { text-shadow: 0 0 30px #00ff88, 0 0 40px #00ff88; }
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #66ffaa;
+        }
+        
+        .briefing {
+            background: rgba(20, 30, 50, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .briefing p {
+            color: #b3ffcc;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .tier-selection {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .tier-selection h2 {
+            color: #66ffaa;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+        
+        .tier-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .tier-button {
+            background: rgba(20, 30, 50, 0.9);
+            border: 3px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tier-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.5);
+            border-color: #66ffaa;
+        }
+        
+        .tier-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .tier-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .tier-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tier-name {
+            font-size: 1.5em;
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tier-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #00ff88;
+            color: #0a0e27;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tier-description {
+            color: #b3ffcc;
+            font-size: 0.95em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mission-detail {
+            display: none;
+            background: rgba(20, 30, 50, 0.95);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 30px;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .mission-detail.active {
+            display: block;
+        }
+        
+        .detail-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #00ff88;
+        }
+        
+        .detail-icon {
+            font-size: 3em;
+            margin-right: 20px;
+        }
+        
+        .detail-title h2 {
+            font-size: 2em;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+        
+        .section {
+            margin: 25px 0;
+        }
+        
+        .section h3 {
+            color: #66ffaa;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .section p {
+            color: #b3ffcc;
+            margin-left: 20px;
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+        
+        .section ul {
+            list-style-type: none;
+            margin-left: 20px;
+        }
+        
+        .section ul li {
+            color: #b3ffcc;
+            margin: 10px 0;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+        
+        .section ul li:before {
+            content: "▸ ";
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .nested-list {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+        
+        .treasure {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            font-size: 1.3em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .info-box {
+            background: rgba(0, 150, 255, 0.2);
+            border-left: 4px solid #0096ff;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+            color: #66ccff;
+        }
+        
+        .info-box strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .warning {
+            background: rgba(255, 100, 100, 0.2);
+            border-left: 4px solid #ff6464;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+            color: #ffaaaa;
+        }
+        
+        .warning strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .back-button {
+            background: #00ff88;
+            color: #0a0e27;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 30px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .back-button:hover {
+            background: #66ffaa;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+        }
+        
+        .back-button:active {
+            transform: scale(0.95);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .tier-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 MISSION: ACCESS GRANTED</h1>
+        <p class="subtitle">The Global City Accessibility Vault Has Been Locked</p>
+        
+        <div class="briefing">
+            <p><strong style="color: #00ff88; font-size: 1.2em;">Welcome, Team.</strong></p>
+            <p>Today, we aren't just coding; we are digital locksmiths. Our mission is to build Ordinal Solutions—smart programs that rank risks and provide the right help at the right time.</p>
+            <p>The city's automated ramp and alert systems are offline. We need three specialist units to delve into the code, identify the key logic, and unlock the city for everyone.</p>
+            <p style="color: #00ff88; font-weight: bold; font-size: 1.1em; margin-top: 20px;">Choose your terminal to begin.</p>
+        </div>
+        
+        <div id="tierSelection" class="tier-selection">
+            <h2>🎯 SELECT YOUR MISSION ROLE</h2>
+            
+            <div class="tier-buttons">
+                <div class="tier-button" onclick="showTier('tier1')">
+                    <div class="tier-icon">🔍</div>
+                    <div class="tier-name">The Logic Scavenger</div>
+                    <div class="tier-badge">TIER 1 - SUPPORTIVE</div>
+                    <div class="tier-description">Restore Logic to the City's Inclusive Parks</div>
+                </div>
+                
+                <div class="tier-button" onclick="showTier('tier2')">
+                    <div class="tier-icon">📐</div>
+                    <div class="tier-name">The Code Architect</div>
+                    <div class="tier-badge">TIER 2 - STANDARD</div>
+                    <div class="tier-description">Rebuild the Hospital Emergency Triage Logic</div>
+                </div>
+                
+                <div class="tier-button" onclick="showTier('tier3')">
+                    <div class="tier-icon">🛡️</div>
+                    <div class="tier-name">The Systems Engineer</div>
+                    <div class="tier-badge">TIER 3 - EXTENSION</div>
+                    <div class="tier-description">Secure the Smart-City Infrastructure Against Errors</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TIER 1 DETAIL -->
+        <div id="tier1" class="mission-detail">
+            <div class="detail-header">
+                <div class="detail-icon">🔍</div>
+                <div class="detail-title">
+                    <h2>The Logic Scavenger</h2>
+                    <span class="tier-badge">TIER 1 - SUPPORTIVE</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>🎯 Mission Objective</h3>
+                <p>Restore Logic to the City's Inclusive Parks</p>
+            </div>
+            
+            <div class="section">
+                <h3>📋 Your Task</h3>
+                <p>The "Water Level Alert" code for the city's inclusive park is in pieces. The logic is there, but the "Syntax Gems" (key Python words) are missing. Your job is to find them and restore the system!</p>
+            </div>
+            
+            <div class="section">
+                <h3>✅ What You Must Do</h3>
+                <ul>
+                    <li>Open your Trinket starter code</li>
+                    <li>Read the comments carefully - they contain clues!</li>
+                    <li>Find the 3 missing "Logic Gems" (keywords: if, elif, else)</li>
+                    <li>Replace the ??? marks with the correct keywords</li>
+                    <li>Make sure to add colons (:) at the end of each line</li>
+                    <li>Check that the lines below each keyword are indented (use Tab)</li>
+                    <li>Run your code and test it!</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Hints:</strong>
+                • Hint 1: The first gem starts with "i" and checks a condition<br>
+                • Hint 2: The second gem starts with "el" and checks another condition<br>
+                • Hint 3: The third gem starts with "el" and handles everything else
+            </div>
+            
+            <div class="treasure">
+                🏆 TREASURE REWARD: When your code runs successfully, you will see your Blue Security Key!
+            </div>
+            
+            <div class="section">
+                <h3>🎓 What You're Learning</h3>
+                <p>Python Structure & Keywords (if/elif/else statements)</p>
+            </div>
+            
+            <div class="warning">
+                <strong>⚡ Watch Out For:</strong>
+                • Missing colons (:) at the end of if/elif/else lines<br>
+                • Incorrect indentation - use the Tab key to indent!<br>
+                • Misspelled keywords - check your spelling carefully
+            </div>
+            
+            <div class="section">
+                <h3>🔑 Your Mission Key</h3>
+                <p>Once you complete this mission, write down your Blue Security Key. You'll need it to unlock the final vault!</p>
+            </div>
+            
+            <button class="back-button" onclick="backToSelection()">⬅ BACK TO MISSION SELECTION</button>
+        </div>
+        
+        <!-- TIER 2 DETAIL -->
+        <div id="tier2" class="mission-detail">
+            <div class="detail-header">
+                <div class="detail-icon">📐</div>
+                <div class="detail-title">
+                    <h2>The Code Architect</h2>
+                    <span class="tier-badge">TIER 2 - STANDARD</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>🎯 Mission Objective</h3>
+                <p>Rebuild the Hospital Emergency Triage Logic</p>
+            </div>
+            
+            <div class="section">
+                <h3>📋 Your Task</h3>
+                <p>The "Emergency Triage System" for the city hospital has lost its blueprint. We need a program that takes a "Pain Level" and assigns a priority rank instantly. You must build this system from scratch!</p>
+            </div>
+            
+            <div class="section">
+                <h3>✅ What You Must Do</h3>
+                <ul>
+                    <li>Open your Trinket starter code</li>
+                    <li>Build a 3-stage triage logic system using if/elif/else</li>
+                    <li>Your code must categorize pain levels correctly:
+                        <ul class="nested-list">
+                            <li>Priority 1: Pain level 8 or higher (Immediate Action)</li>
+                            <li>Priority 2: Pain level 4 to 7 (Urgent Care)</li>
+                            <li>Priority 3: Pain level 0 to 3 (Standard Care)</li>
+                        </ul>
+                    </li>
+                    <li>Test your code with these values: 3, 6, and 9</li>
+                    <li>Make sure all three test cases produce the correct priority!</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Building Your Logic:</strong>
+                • Start with: if pain_score >= 8:<br>
+                • Then add: elif pain_score >= 4:<br>
+                • Finally add: else:<br>
+                • Don't forget to indent your print statements!
+            </div>
+            
+            <div class="treasure">
+                🏆 TREASURE REWARD: When your code correctly identifies a Level 9 as 'Priority 1', you will see your Gold Security Key!
+            </div>
+            
+            <div class="section">
+                <h3>🎓 What You're Learning</h3>
+                <p>Building if/elif/else Logic & Working with User Inputs</p>
+            </div>
+            
+            <div class="warning">
+                <strong>⚡ Testing Instructions:</strong>
+                • Test 1: Enter 3 (should show Priority 3 - Standard Care)<br>
+                • Test 2: Enter 6 (should show Priority 2 - Urgent Care)<br>
+                • Test 3: Enter 9 (should show Priority 1 + Your Security Key!)
+            </div>
+            
+            <div class="section">
+                <h3>🔑 Your Mission Key</h3>
+                <p>Once you complete this mission and test with pain level 9, write down your Gold Security Key. You'll need it to unlock the final vault!</p>
+            </div>
+            
+            <button class="back-button" onclick="backToSelection()">⬅ BACK TO MISSION SELECTION</button>
+        </div>
+        
+        <!-- TIER 3 DETAIL -->
+        <div id="tier3" class="mission-detail">
+            <div class="detail-header">
+                <div class="detail-icon">🛡️</div>
+                <div class="detail-title">
+                    <h2>The Systems Engineer</h2>
+                    <span class="tier-badge">TIER 3 - EXTENSION</span>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>🎯 Mission Objective</h3>
+                <p>Secure the Smart-City Infrastructure Against Errors</p>
+            </div>
+            
+            <div class="section">
+                <h3>📋 Your Task</h3>
+                <p>The "Smart Light System" for residents with visual impairments is being "sabotaged" by bad data entries, causing the system to crash. You must create an unbreakable system that can handle any input!</p>
+            </div>
+            
+            <div class="section">
+                <h3>✅ What You Must Do</h3>
+                <ul>
+                    <li>Open your Trinket starter code</li>
+                    <li>Complete THREE engineering challenges:
+                        <ul class="nested-list">
+                            <li><strong>Challenge 1:</strong> The while loop is already started - keep it running!</li>
+                            <li><strong>Challenge 2:</strong> Add try/except to catch bad inputs (like "abc" instead of a number)</li>
+                            <li><strong>Challenge 3:</strong> Add if/elif/else logic to categorize light levels</li>
+                        </ul>
+                    </li>
+                    <li>Light Level Categories:
+                        <ul class="nested-list">
+                            <li>Above 70 lux: Too bright, close the smart blinds</li>
+                            <li>Between 30-70 lux: Optimal lighting</li>
+                            <li>Below 30 lux: Too dark, turn on assistance lights</li>
+                        </ul>
+                    </li>
+                    <li>Handle negative numbers (reject them!)</li>
+                    <li>Test your system with both invalid and valid inputs</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Error Handling Structure:</strong>
+                • Wrap your code in: try:<br>
+                • Convert input to integer: lux = int(user_input)<br>
+                • Add your if/elif/else logic inside the try block<br>
+                • Catch errors with: except ValueError:<br>
+                • Print an error message to show the system is protected!
+            </div>
+            
+            <div class="treasure">
+                🏆 TREASURE REWARD: When your code handles errors correctly AND processes a high light value (above 70), you will see your Obsidian Master Key!
+            </div>
+            
+            <div class="section">
+                <h3>🎓 What You're Learning</h3>
+                <p>Advanced Error Handling (try/except) & Continuous Loops (while loops)</p>
+            </div>
+            
+            <div class="warning">
+                <strong>⚡ Testing Instructions:</strong>
+                • Test 1: Enter "abc" (should catch the error, NOT crash!)<br>
+                • Test 2: Enter -5 (should reject negative numbers)<br>
+                • Test 3: Enter 95 (should show "Too Bright" + Your Master Key!)<br>
+                • Test 4: Enter "exit" (should close the loop safely)
+            </div>
+            
+            <div class="section">
+                <h3>🔑 Your Mission Key</h3>
+                <p>Once you complete this mission and your system is unbreakable, write down your Obsidian Master Key. You'll need it to unlock the final vault!</p>
+            </div>
+            
+            <button class="back-button" onclick="backToSelection()">⬅ BACK TO MISSION SELECTION</button>
+        </div>
+    </div>
+    
+    <script>
+        function showTier(tierId) {
+            // Hide tier selection
+            document.getElementById('tierSelection').style.display = 'none';
+            
+            // Hide all mission details
+            document.querySelectorAll('.mission-detail').forEach(detail => {
+                detail.classList.remove('active');
+            });
+            
+            // Show selected tier
+            document.getElementById(tierId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function backToSelection() {
+            // Hide all mission details
+            document.querySelectorAll('.mission-detail').forEach(detail => {
+                detail.classList.remove('active');
+            });
+            
+            // Show tier selection
+            document.getElementById('tierSelection').style.display = 'block';
+            
+            // Scroll to tier selection
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
